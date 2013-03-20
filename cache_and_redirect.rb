@@ -110,6 +110,17 @@ end
                                           
 exitcode=0
 
+if ARGV[0]
+  if ARGV[0]=="staging"
+      @urls_cache.each_with_index do | url,i |
+	@urls_cache[i]=url.gsub "txtr.com","staging.txtr.com"
+      end
+      @urls_nocache.each_with_index do | url,i |
+	@urls_nocache[i]=url.gsub "txtr.com","staging.txtr.com"
+      end
+  end
+end
+
 puts "testing redirects"
 @redirect_ips.each do |key, value|
   puts "  testing for: " + value
