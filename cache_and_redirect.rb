@@ -12,12 +12,20 @@ require 'pp'
     "199.193.115.145" => "http://us.txtr.com/"
 }
 
-@urls = 
+@urls_cache = 
 [ 
+  "http://de.txtr.com",
   "http://de.txtr.com/catalog/category/cxbhw/Geisteswissenschaften/",
   "http://de.txtr.com/catalog/category/cxbhw/Geisteswissenschaften/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid",
   "http://de.txtr.com/catalog/category/b8m9w/English%20Books/",
-  "http://de.txtr.com/catalog/category/b8m9w/English%20Books/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid"
+  "http://de.txtr.com/catalog/category/b8m9w/English%20Books/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid",
+  "http://de.txtr.com/catalog/category/b8a9w/Kunst/",
+  "http://de.txtr.com/catalog/document/f5fxag9/Vademecum-Autor%20unbekannt/",
+  "http://gb.txtr.com",
+  "http://gb.txtr.com/catalog/category/xe81w/Computing%20&%20information%20technology/",
+  "http://gb.txtr.com/catalog/category/xe81w/Computing%20&%20information%20technology/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid",
+  "http://gb.txtr.com/catalog/category/xkasw/Earth%20sciences,%20geography,%20environment,%20planning/",
+  "http://gb.txtr.com/catalog/document/a5ke8z9/Rambunctious%20Garden-Marris,%20Emma/"
 ]
 
 
@@ -78,10 +86,10 @@ puts "testing redirects"
 end
 
   
-puts "testing cache misses"
+puts "testing cache for unintended misses"
 run=3
 while run>0
-  @urls.each do |url|
+  @urls_cache.each do |url|
     puts " testing for: "+url
     r,t = test_caching(url)
     puts "   #{t}"
