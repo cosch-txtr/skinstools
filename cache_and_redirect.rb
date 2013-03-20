@@ -82,7 +82,7 @@ puts "testing redirects"
   puts "  testing for: " + value
   r,t = test_redirect(key,value)
   puts "    #{t}"
-  exitcode = 1 if r
+  exitcode = 1 if !r
 end
 
   
@@ -93,7 +93,7 @@ while run>0
     puts " testing for: "+url
     r,t = test_caching(url)
     puts "   #{t}"
-    exitcode = 1 if r
+    exitcode = 1 if !r
   end
   run -=1
 end                    
