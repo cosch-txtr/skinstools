@@ -1,7 +1,12 @@
 
+#
+# this needs ruby 2.0.0
+#
+
 require 'net/http'
 require 'date'
 require 'pp'
+require 'openssl'
 
 
 @redirect_ips=
@@ -63,7 +68,11 @@ def test_caching(url)
     i=2
     while i>0
       http = Net::HTTP.new( uri.host, uri.port )  
-      res = Net::HTTP.get_response(uri)                    
+      if (uri.class == URI::HTTPS )
+	http.use_ssl = true
+	http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+      res = http.get("/")                    
 
       return false, "no X-Cache Header" if (res.get_fields('X-Cache')==nil)
       
@@ -83,8 +92,16 @@ end
 
 def test_nocaching(url)
     uri = URI(url)
+    
     http = Net::HTTP.new( uri.host, uri.port )  
-    res = Net::HTTP.get_response(uri)                    
+    #http.set_debug_output($stdout)
+    if (uri.class == URI::HTTPS )
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+    
+    path = uri.path.empty? ? "/" : uri.path
+    res = http.get(path)                        
 
     return false, "found X-Cache Header" if (res.get_fields('X-Cache')!=nil)
     
@@ -116,7 +133,7 @@ end
 
 puts "testing cache for unintended hits"
 @urls_cache.each do |url|
-  @urls_nocache.push( url.gsub "http", "https" )
+  #@urls_nocache.push( url.gsub "http", "https" )
 end
 
 run=1
