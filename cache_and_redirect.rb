@@ -25,10 +25,16 @@ require 'pp'
   "http://gb.txtr.com/catalog/category/xe81w/Computing%20&%20information%20technology/",
   "http://gb.txtr.com/catalog/category/xe81w/Computing%20&%20information%20technology/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid",
   "http://gb.txtr.com/catalog/category/xkasw/Earth%20sciences,%20geography,%20environment,%20planning/",
-  "http://gb.txtr.com/catalog/document/a5ke8z9/Rambunctious%20Garden-Marris,%20Emma/",
-  "http://txtr.com"
+  "http://gb.txtr.com/catalog/document/a5ke8z9/Rambunctious%20Garden-Marris,%20Emma/"
 ]
 
+@urls_nocache =
+[
+  "http://txtr.com",
+  "http://de.txtr.com/basket/",
+  "http://gb.txtr.com/basket/",
+  "https://de.txtr.com/basket/"
+]
 
 def test_redirect( ip, location) 
     uri = URI.parse( "http://txtr.com" )
@@ -74,7 +80,16 @@ def test_caching(url)
     
     return true, "ok"
 end
-                                          
+
+def test_nocaching(url)
+    uri = URI(url)
+    http = Net::HTTP.new( uri.host, uri.port )  
+    res = Net::HTTP.get_response(uri)                    
+
+    return false, "found X-Cache Header" if (res.get_fields('X-Cache')!=nil)
+    
+    return true, "ok"
+end                                          
                                           
 exitcode=0
 
@@ -88,7 +103,7 @@ end
 
   
 puts "testing cache for unintended misses"
-run=3
+run=1
 while run>0
   @urls_cache.each do |url|
     puts " testing for: "+url
@@ -98,5 +113,22 @@ while run>0
   end
   run -=1
 end                    
-                          
+
+puts "testing cache for unintended hits"
+@urls_cache.each do |url|
+  @urls_nocache.push( url.gsub "http", "https" )
+end
+
+run=1
+while run>0
+  @urls_nocache.each do |url|
+    puts " testing for: "+url
+    r,t = test_nocaching(url)
+    puts "   #{t}"
+    exitcode = 1 if !r
+    sleep(0.5)
+  end
+  run -=1
+end        
+
 exit exitcode
