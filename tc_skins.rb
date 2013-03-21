@@ -15,7 +15,12 @@ class TestSkins < Test::Unit::TestCase
     begin
       yield
     rescue Test::Unit::AssertionFailedError => e
-      self.send(:add_failure, e.message, e.backtrace)
+      msg = e.message
+      if( @res )
+	msg += "\n"
+	msg += "<<<< RESPONSE WAS >>>>:#{@res.to_hash.inspect}"
+      end
+      self.send(:add_failure, msg, e.backtrace)
       return false
     else
       return true
@@ -30,7 +35,7 @@ class TestSkins < Test::Unit::TestCase
 
     path = uri.path.empty? ? "/" : uri.path
     res = req.get(path,headers)
-    @res = res
+    @res=res
     return if !continue_test{ 
 	assert_equal "302", res.code, "wrong response code:#{res.code} for #{ip}:#{location}"
     }
@@ -53,7 +58,8 @@ class TestSkins < Test::Unit::TestCase
 	http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
       res = http.get("/")                    
-
+      @res=res
+      
       return if !continue_test{ 
 	assert_not_nil res.get_fields('X-Cache'), "no X-Cache Header for #{url}"
       }
@@ -84,7 +90,7 @@ class TestSkins < Test::Unit::TestCase
     
     path = uri.path.empty? ? "/" : uri.path
     res = http.get(path)                        
-
+    @res=res
     continue_test{ 
       assert_nil res.get_fields('X-Cache'), "found X-Cache Header for #{url}" 
     }    
