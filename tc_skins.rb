@@ -1,7 +1,7 @@
 require 'rubygems'
 gem 'test-unit', '=2.5.4'
 require 'test/unit'
-require 'tuxml'
+require 'ci/reporter/rake/test_unit_loader.rb'
 require './skins'
 
 class TestSkins < Test::Unit::TestCase
