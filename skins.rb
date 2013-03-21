@@ -19,6 +19,7 @@ class Skins
 
     @urls_cache = 
     [ 
+      "http://txtr.com",
       "http://de.txtr.com",
       "http://de.txtr.com/catalog/category/cxbhw/Geisteswissenschaften/",
       "http://de.txtr.com/catalog/category/cxbhw/Geisteswissenschaften/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid",
