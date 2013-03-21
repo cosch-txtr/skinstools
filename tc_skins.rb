@@ -32,7 +32,7 @@ class TestSkins < Test::Unit::TestCase
     res = req.get(path,headers)
     @res = res
     return if !continue_test{ 
-	assert_equal "301", res.code, "wrong response code:#{res.code} for #{ip}:#{location}"
+	assert_equal "302", res.code, "wrong response code:#{res.code} for #{ip}:#{location}"
     }
     continue_test{ 
       assert_equal 1, res.get_fields('location').count, "wrong location count for #{ip}:#{location}"
