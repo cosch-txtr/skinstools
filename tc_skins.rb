@@ -10,6 +10,7 @@ class TestSkins < Test::Unit::TestCase
   def setup
     @skins = Skins.new
     @res = nil
+    @url = nil
   end
   
   
@@ -18,9 +19,13 @@ class TestSkins < Test::Unit::TestCase
       yield
     rescue Test::Unit::AssertionFailedError => e
       msg = e.message
+      if( @url )
+	msg += "\n"
+	msg += ">>>>>>>> URL WAS >>>>>>>>>:\n#{@url}"
+      end
       if( @res )
 	msg += "\n"
-	msg += "<<<< RESPONSE WAS >>>>:#{@res.to_hash.inspect}"
+	msg += ">>>> RESPONSE HEADERS >>>>:\n#{@res.to_hash.inspect.gsub ", ",", \n"}"
       end
       self.send(:add_failure, msg, e.backtrace)
       return false
@@ -39,6 +44,8 @@ class TestSkins < Test::Unit::TestCase
     path = uri.path.empty? ? "/" : uri.path
     res = req.get(path,headers)
     @res=res
+    @url=@skins.redirect_host
+    
     return if !continue_test{ 
 	assert_equal "302", res.code, "wrong response code:#{res.code} for #{ip}:#{location}"
     }
@@ -63,6 +70,7 @@ class TestSkins < Test::Unit::TestCase
       end
       res = http.get("/")                    
       @res=res
+      @url=url
       
       return if !continue_test{ 
 	assert_not_nil res.get_fields('X-Cache'), "no X-Cache Header for #{url}"
@@ -99,6 +107,8 @@ class TestSkins < Test::Unit::TestCase
     path = uri.path.empty? ? "/" : uri.path
     res = http.get(path)                        
     @res=res
+    @url=url
+    
     continue_test{ 
       assert_nil res.get_fields('X-Cache'), "found X-Cache Header for #{url}" 
     }    
