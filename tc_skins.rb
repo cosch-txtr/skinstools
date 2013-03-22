@@ -6,10 +6,12 @@ require './skins'
 
 class TestSkins < Test::Unit::TestCase
 
+  
   def setup
     @skins = Skins.new
     @res = nil
   end
+  
   
   def continue_test
     begin
@@ -26,6 +28,7 @@ class TestSkins < Test::Unit::TestCase
       return true
     end
   end
+  
   
   def check_redirect( ip, location)
     uri = URI.parse( @skins.redirect_host )
@@ -47,6 +50,7 @@ class TestSkins < Test::Unit::TestCase
     }
   end
   
+  
   def check_cache(url)
     uri = URI(url)
     
@@ -67,6 +71,9 @@ class TestSkins < Test::Unit::TestCase
       cache = res.get_fields('X-Cache')[0]
       
       if cache.start_with?("MISS:")
+	  return if !continue_test{ 
+	    assert_not_nil @missed, "@missed[] is nil - internal test error"
+	  }
 	  continue_test{ 
 	    assert_nil @missed[url], "missed more then once: #{url}"
 	  }
@@ -77,6 +84,7 @@ class TestSkins < Test::Unit::TestCase
       i -=1
     end
   end
+  
   
   def check_nocache( url )
     uri = URI(url)
@@ -96,11 +104,13 @@ class TestSkins < Test::Unit::TestCase
     }    
   end
   
+  
   def test_prod_redirect
     @skins.redirects.each do |ip, location|
       check_redirect(ip,location)
     end
   end
+  
   
   def test_prod_cache
     @skins.urls_cache.each do |url|
@@ -108,26 +118,30 @@ class TestSkins < Test::Unit::TestCase
     end
   end
   
+  
   def test_prod_nocache
     @skins.urls_nocache.each do |url|
 	check_nocache( url )
-    end
-    
+    end  
   end
+  
   
   def test_stg_redirect
     @skins.staging!
     test_prod_redirect
   end
   
+  
   def test_stg_cache
     @skins.staging!
     test_prod_cache
   end
   
+  
   def test_stg_nocache
     @skins.staging!
     test_prod_nocache
   end
+  
   
 end
