@@ -109,9 +109,17 @@ class TestSkins < Test::Unit::TestCase
     @res=res
     @url=url
     
-    continue_test{ 
-      assert_nil res.get_fields('X-Cache'), "found X-Cache Header for #{url}" 
-    }    
+    cache = res.get_fields('X-Cache') == nil ? nil : res.get_fields('X-Cache')[0]
+    
+    if( cache )
+      continue_test{ 
+	assert_true cache.start_with?("MISS:"), "no X-Cache: MISS Header found for #{url}" 
+      }
+
+      continue_test{ 
+	assert_false cache.start_with?("HIT:"), "found X-Cache: HIT Header for #{url}" 
+      }
+    end
   end
   
   

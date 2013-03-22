@@ -35,6 +35,7 @@ class Skins
 
     @urls_nocache =
     [
+      "http://txtr.de",
       "http://txtr.com",
       "http://de.txtr.com/basket/",
       "http://gb.txtr.com/basket/",
