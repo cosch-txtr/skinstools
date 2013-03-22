@@ -38,13 +38,14 @@ class Skins
       "http://txtr.de",
       "http://txtr.com",
       "http://de.txtr.com/basket/",
-      "http://gb.txtr.com/basket/",
-      "https://de.txtr.com/basket/"
+      "http://gb.txtr.com/basket/"
     ]
     
     @missed = {}
     
-    @staging = false;
+    @staging = false
+    
+    @ssl = false
   end
   
   
@@ -74,7 +75,6 @@ class Skins
   
   
   def staging!
-
     @redirect_host = @redirect_host.gsub "txtr.com","staging.txtr.com"
     @redirect_ips.each do |ip, location|
 	@redirect_ips[ip]=location.gsub "txtr.com","staging.txtr.com"
@@ -87,6 +87,30 @@ class Skins
     @urls_nocache.each_with_index do | url,i |
       @urls_nocache[i]=url.gsub "txtr.com","staging.txtr.com"
     end
+    
+    @staging = true
   end  
+  
+  
+  def ssl?
+    @ssl
+  end
+  
+  def ssl!
+    @redirect_host = @redirect_host.gsub "http","https"
+    @redirect_ips.each do |ip, location|
+	@redirect_ips[ip]=location.gsub "http","https"
+    end
+    
+    @urls_cache.each_with_index do | url,i |
+      @urls_cache[i]=url.gsub "http","https"
+    end
+    
+    @urls_nocache.each_with_index do | url,i |
+      @urls_nocache[i]=url.gsub "http","https"
+    end
+    
+    @ssl = true
+  end
   
 end

@@ -38,6 +38,12 @@ class TestSkins < Test::Unit::TestCase
   def check_redirect( ip, location)
     uri = URI.parse( @skins.redirect_host )
     req = Net::HTTP::new(uri.host, uri.port)
+    
+    if (uri.class == URI::HTTPS )
+      req.use_ssl = true
+      req.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+    
     #req.set_debug_output($stdout)
     headers = { 'X-Forwarded-for' => ip }
 
@@ -123,43 +129,75 @@ class TestSkins < Test::Unit::TestCase
   end
   
   
-  def test_prod_redirect
+# http prod  
+  def test_http_prod_redirect
     @skins.redirects.each do |ip, location|
       check_redirect(ip,location)
     end
   end
-  
-  
-  def test_prod_cache
+    
+  def test_http_prod_cache
     @skins.urls_cache.each do |url|
       check_cache(url)
     end
   end
-  
-  
-  def test_prod_nocache
+    
+  def test_http_prod_nocache
     @skins.urls_nocache.each do |url|
 	check_nocache( url )
     end  
+  end  
+
+  
+# https prod  
+  def test_https_prod_redirect
+    @skins.ssl!
+    test_http_prod_redirect
+  end
+  
+  def test_https_prod_cache
+    @skins.ssl!
+    test_http_prod_cache
+  end
+  
+  def test_https_prod_nocache
+    @skins.ssl!
+    test_http_prod_nocache
   end
   
   
-  def test_stg_redirect
+# http stg  
+  def test_http_stg_redirect_http
     @skins.staging!
-    test_prod_redirect
+    test_http_prod_redirect
   end
-  
-  
-  def test_stg_cache
+    
+  def test_http_stg_cache
     @skins.staging!
-    test_prod_cache
+    test_http_prod_cache
   end
   
-  
-  def test_stg_nocache
+  def test_http_stg_nocache
     @skins.staging!
-    test_prod_nocache
+    test_http_prod_nocache
   end
   
+  
+# https stg    
+  def test_https_stg_redirect
+    @skins.staging!
+    @skins.ssl!
+    test_http_prod_redirect
+  end
+
+  def test_https_stg_cache
+    @skins.staging!
+    test_http_prod_cache
+  end
+  
+  def test_https_stg_nocache
+    @skins.staging!
+    test_http_prod_nocache
+  end
   
 end
