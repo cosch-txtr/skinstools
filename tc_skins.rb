@@ -168,6 +168,50 @@ class TestSkins < Test::Unit::TestCase
   end
   
   
+  def check_purge( url )
+    uri = URI.parse( @skins.redirect_host )
+    http = Net::HTTP::new(uri.host, uri.port)
+    
+    #first purg the url
+    puri = URI.parse( url )
+    headers = { 'host' => puri.host }
+    headers['X-Forwarded-proto'] ='https' if puri.class == URI::HTTPS 
+    
+    path = puri.path.empty? ? "/" : puri.path
+    req = Net::HTTP::Purge.new(path,headers)
+    res = http.request(req)
+    @res=res
+    @url=url
+    
+    continue_test {
+	assert_equal "200", res.code, "Response Code is not 200"
+      }
+    
+    #second check if Age is 0 now
+    http = Net::HTTP.new( puri.host, puri.port )  
+    #http.set_debug_output($stdout)
+    if (puri.class == URI::HTTPS )
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+    
+    path = uri.path.empty? ? "/" : uri.path
+    res = http.get(path)                        
+    @res=res
+    @url=url
+    
+    return if !continue_test{ 
+      assert_not_nil res.get_fields('Age'), "no Age Header for #{url}"
+    }
+    
+    age = Integer( res.get_fields('Age')[0] )
+    
+    continue_test {
+      assert_equal 0, age, "Age is not 0 after purge for #{url}"
+      }
+  end
+  
+  
 # http prod  
   def test_http_prod_redirect
     @skins.redirects.each do |ip, location|
@@ -221,6 +265,12 @@ class TestSkins < Test::Unit::TestCase
     test_http_prod_nocache
   end
   
+  def test_http_stg_purge
+    @skins.staging!
+    @skins.urls_purge.each do |url|
+      check_purge(url)
+    end
+  end
   
 # https stg    
   def test_https_stg_redirect
@@ -231,12 +281,22 @@ class TestSkins < Test::Unit::TestCase
 
   def test_https_stg_cache
     @skins.staging!
+    @skins.ssl!
     test_http_prod_cache
   end
   
   def test_https_stg_nocache
     @skins.staging!
+    @skins.ssl!
     test_http_prod_nocache
+  end
+  
+  def test_https_stg_purge
+    @skins.staging!
+    @skins.ssl!
+    @skins.urls_purge.each do |url|
+      check_purge(url)
+    end
   end
   
 end

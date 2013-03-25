@@ -4,6 +4,12 @@ require 'date'
 require 'pp'
 require 'openssl'
 
+class Net::HTTP::Purge < Net::HTTPRequest
+  METHOD = 'PURGE'
+  REQUEST_HAS_BODY  = false
+  RESPONSE_HAS_BODY = true
+end
+
 class Skins
 
   def initialize(*args)
@@ -54,6 +60,12 @@ class Skins
       "http://gb.txtr.com/basket/"
     ]
     
+    @urls_purge =
+    [
+      "http://de.txtr.com",
+      "http://it.txtr.com"
+    ]
+    
     @missed = {}
     
     @staging = false
@@ -82,6 +94,11 @@ class Skins
   end
   
   
+  def urls_purge
+    @urls_purge
+  end
+  
+  
   def staging?
     @staging
   end
@@ -99,6 +116,10 @@ class Skins
     
     @urls_nocache.each_with_index do | url,i |
       @urls_nocache[i]=url.gsub "txtr.com","staging.txtr.com"
+    end
+    
+    @urls_purge.each_with_index do | url,i |
+      @urls_purge[i]=url.gsub "txtr.com","staging.txtr.com"
     end
     
     @staging = true
@@ -123,6 +144,10 @@ class Skins
     
     @urls_nocache.each_with_index do | url,i |
       @urls_nocache[i]=url.gsub "http","https"
+    end
+    
+    @urls_purge.each_with_index do | url,i |
+      @urls_purge[i]=url.gsub "http","https"
     end
     
     @ssl = true
