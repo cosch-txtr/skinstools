@@ -70,6 +70,8 @@ class TestSkins < Test::Unit::TestCase
     uri = URI(url)
     
     i=2
+    first_age=0
+    
     while i>0
       http = Net::HTTP.new( uri.host, uri.port )  
       if (uri.class == URI::HTTPS )
@@ -81,12 +83,12 @@ class TestSkins < Test::Unit::TestCase
       @url=url
       
       return if !continue_test{ 
-	assert_not_nil res.get_fields('X-Cache'), "no X-Cache Header for #{url}"
+	assert_not_nil res.get_fields('Age'), "no Age Header for #{url}"
       }
       
-      cache = res.get_fields('X-Cache')[0]
+      age = Integer( res.get_fields('Age')[0] )
       
-      if cache.start_with?("MISS:")
+      if age==0
 	  return if !continue_test{ 
 	    assert_not_nil @missed, "@missed[] is nil - internal test error"
 	  }
@@ -96,38 +98,72 @@ class TestSkins < Test::Unit::TestCase
 	  @missed[url]=DateTime.now.strftime 
       end
       
+      if first_age==0
+	first_age = age
+      else
+	  continue_test{
+	    assert_true age > first_age, "Age went down on second request for: #{url}"
+	  }
+      end
+      
       sleep(1)
       i -=1
     end
+    
   end
   
   
   def check_nocache( url )
     uri = URI(url)
       
-    http = Net::HTTP.new( uri.host, uri.port )  
-    #http.set_debug_output($stdout)
-    if (uri.class == URI::HTTPS )
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    end
+    i=2
+    first_age=-1
     
-    path = uri.path.empty? ? "/" : uri.path
-    res = http.get(path)                        
-    @res=res
-    @url=url
-    
-    cache = res.get_fields('X-Cache') == nil ? nil : res.get_fields('X-Cache')[0]
-    
-    if( cache )
-      continue_test{ 
-	assert_true cache.start_with?("MISS:"), "no X-Cache: MISS Header found for #{url}" 
-      }
+    while i>0
+      http = Net::HTTP.new( uri.host, uri.port )  
+      #http.set_debug_output($stdout)
+      if (uri.class == URI::HTTPS )
+	http.use_ssl = true
+	http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+      
+      path = uri.path.empty? ? "/" : uri.path
+      res = http.get(path)                        
+      @res=res
+      @url=url
+      
+      cache = res.get_fields('X-Cache') == nil ? nil : res.get_fields('X-Cache')[0]    
+      if( cache )
+	continue_test{ 
+	  assert_true cache.start_with?("MISS:"), "X-Cache Header is not MISS found for #{url}:#{cache}" 
+	}
 
-      continue_test{ 
-	assert_false cache.start_with?("HIT:"), "found X-Cache: HIT Header for #{url}" 
-      }
+	continue_test{ 
+	  assert_false cache.start_with?("HIT:"), "found X-Cache: HIT Header for #{url}:#{cache}" 
+	}
+      end
+      
+      agestr = res.get_fields('Age') == nil ? nil : res.get_fields('Age')[0]
+      if( agestr )
+	  puts "Age is #{agestr}"
+	  age = Integer(agestr)
+	  continue_test{ 
+	    assert_true age==0, "Age is not 0 for #{url}" 
+	  }
+	  
+	  if first_age==-1
+	    first_age = age
+	  else
+	      continue_test{
+		assert_true age == first_age, "Age is not the same on second request for: #{url}"
+	      }
+	  end
+      end
+      
+      sleep(1)
+      i-=1
     end
+    
   end
   
   
