@@ -205,7 +205,7 @@ class TestSkins < Test::Unit::TestCase
   
   
 # http stg  
-  def test_http_stg_redirect_http
+  def test_http_stg_redirect
     @skins.staging!
     test_http_prod_redirect
   end
