@@ -11,6 +11,7 @@ class TestSkins < Test::Unit::TestCase
     @skins = Skins.new
     @res = nil
     @url = nil
+    @missed = { }
   end
   
   
