@@ -14,9 +14,22 @@ class Skins
 	"89.246.67.228" => "http://de.txtr.com/",
 	"109.73.186.2" => "http://it.txtr.com/",
 	"213.249.128.117" => "http://gb.txtr.com/",
-	"199.193.115.145" => "http://us.txtr.com/"
+	"199.193.115.145" => "http://us.txtr.com/",
+	"192.189.54.23" => "http://au.txtr.com/",
+	"194.208.32.23" => "http://at.txtr.com/",
+	"46.253.160.23" => "http://be.txtr.com/",
+	"24.38.144.23" => "http://ca.txtr.com/",
+	"78.153.191.23" => "http://dk.txtr.com/",
+	"62.201.128.23" => "http://fr.txtr.com/",
+	"82.141.192.23" => "http://ie.txtr.com/",
+	"62.133.192.23" => "http://nl.txtr.com/",
+	"62.181.160.23" => "http://pl.txtr.com/",
+	"196.29.240.23" => "http://za.txtr.com/",
+	"80.73.144.23" => "http://es.txtr.com/",
+	"80.75.112.23" => "http://ch.txtr.com/"#,
+	#"198.246.229.23" => "int.txtr.com" #is from barbados
     }
-
+    
     @urls_cache = 
     [ 
       "http://de.txtr.com",

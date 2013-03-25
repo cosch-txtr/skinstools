@@ -63,6 +63,7 @@ class TestSkins < Test::Unit::TestCase
     continue_test{ 
       assert_equal location, res.get_fields('location')[0], "wrong location! for #{ip}:#{location}"
     }
+    sleep(0.3)
   end
   
   
