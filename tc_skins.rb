@@ -46,6 +46,7 @@ class TestSkins < Test::Unit::TestCase
     
     #req.set_debug_output($stdout)
     headers = { 'X-Forwarded-for' => ip }
+    headers['X-Forwarded-proto']="https" if @skins.ssl?
 
     path = uri.path.empty? ? "/" : uri.path
     res = req.get(path,headers)

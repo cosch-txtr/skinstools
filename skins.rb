@@ -97,7 +97,9 @@ class Skins
   end
   
   def ssl!
-    @redirect_host = @redirect_host.gsub "http","https"
+    #due to nginx ssl proxy limits we still connect to http and set X-Forwarded-proto to https
+    # so no https for redirect host anymore
+    #@redirect_host = @redirect_host.gsub "http","https"
     @redirect_ips.each do |ip, location|
 	@redirect_ips[ip]=location.gsub "http","https"
     end
