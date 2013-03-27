@@ -46,8 +46,8 @@ class Skins
       "http://de.txtr.com/catalog/category/b8a9w/Kunst/",
       "http://de.txtr.com/catalog/document/f5fxag9/Vademecum-Autor%20unbekannt/",
       "http://gb.txtr.com",
-      "http://gb.txtr.com/catalog/category/xe81w/Computing%20&%20information%20technology/",
-      "http://gb.txtr.com/catalog/category/xe81w/Computing%20&%20information%20technology/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid",
+      "http://gb.txtr.com/catalog/category/xe81w/Computing%20/",
+      "http://gb.txtr.com/catalog/category/xe81w/Computing%20/?sort=price&lang=&invert=False&page=1&bookprice=None&slv=grid",
       "http://gb.txtr.com/catalog/category/xkasw/Earth%20sciences,%20geography,%20environment,%20planning/",
       "http://gb.txtr.com/catalog/document/a5ke8z9/Rambunctious%20Garden-Marris,%20Emma/"
     ]
