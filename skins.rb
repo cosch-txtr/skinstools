@@ -15,16 +15,22 @@ class Skins
   def initialize(*args)
     @redirect_host = "http://txtr.com"
     
+    @stg_redirect_block=
+    {
+	"192.189.54.23" => "http://au.txtr.com/",
+	"24.38.144.23" => "http://ca.txtr.com/"
+    }
+    
     @redirect_ips=
     { 
 	"89.246.67.228" => "http://de.txtr.com/",
 	"109.73.186.2" => "http://it.txtr.com/",
 	"213.249.128.117" => "http://gb.txtr.com/",
 	"199.193.115.145" => "http://us.txtr.com/",
-#	"192.189.54.23" => "http://au.txtr.com/",
+	"192.189.54.23" => "http://au.txtr.com/",
 	"194.208.32.23" => "http://at.txtr.com/",
 	"46.253.160.23" => "http://be.txtr.com/",
-#	"24.38.144.23" => "http://ca.txtr.com/",
+	"24.38.144.23" => "http://ca.txtr.com/",
 	"78.153.191.23" => "http://dk.txtr.com/",
 	"62.201.128.23" => "http://fr.txtr.com/",
 	"82.141.192.23" => "http://ie.txtr.com/",
@@ -83,6 +89,11 @@ class Skins
     @redirect_ips
   end
 
+  
+  def blocked_for_stg?(ip)
+    return @stg_redirect_block[ip] !=nil
+  end
+  
   
   def urls_cache
     @urls_cache

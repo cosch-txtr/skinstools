@@ -215,7 +215,7 @@ class TestSkins < Test::Unit::TestCase
 # http prod  
   def test_http_prod_redirect
     @skins.redirects.each do |ip, location|
-      check_redirect(ip,location)
+      check_redirect(ip,location) if (!@skins.staging? || !@skins.blocked_for_stg?(ip))
     end
   end
     
