@@ -101,9 +101,9 @@ class TestSkins < Test::Unit::TestCase
       
       if first_age==0
 	first_age = age
-      else
+      elsif first_age<7198
 	  continue_test{
-	    assert_true (age > first_age && first_age<7198), "Age(#{age}<#{first_age}) went down on second request and was not on the limit for: #{url}"
+	    assert_true age > first_age, "Age(#{age}<#{first_age}) went down on second request and was not on the limit for: #{url}"
 	  }
       end
       
